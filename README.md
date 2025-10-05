@@ -15,21 +15,40 @@ A simple FastAPI-based web service to retrieve holidays (national and regional) 
 
 - **Parameters**:
   - `country_code` (path): ISO 3166-1 alpha-2 country code (e.g., 'IN', 'US').
-  - `year` (query): The year for which to fetch holidays (e.g., 2026).
+  - `year` (query, required): The year for which to fetch holidays (e.g., 2026).
+  - `type` (query, optional): Filter by holiday type - 'national', 'regional', or 'both' (default).
+  - `date` (query, optional): Filter to holidays on a specific date (YYYY-MM-DD). If provided, returns holidays for that date only.
 
-- **Example Request**:
+- **Example Requests**:
   ```
-  GET https://your-railway-url.up.railway.app/holidays/IN?year=2026
+  # All holidays for India in 2026
+  GET https://festivalsapi.up.railway.app/holidays/IN?year=2026
+
+  # Only national holidays for India in 2026
+  GET https://festivalsapi.up.railway.app/holidays/IN?year=2026&type=national
+
+  # Only regional holidays for India in 2026
+  GET https://festivalsapi.up.railway.app/holidays/IN?year=2026&type=regional
+
+  # All holidays on a specific date (e.g., Pongal)
+  GET https://festivalsapi.up.railway.app/holidays/IN?year=2026&date=2026-01-14
+
+  # Regional holidays on a specific date
+  GET https://festivalsapi.up.railway.app/holidays/IN?year=2026&date=2026-01-14&type=regional
   ```
 
 - **Example Response**:
   ```json
   [
-    {"date": "2026-01-01", "name": "New Year's Day"},
-    {"date": "2026-01-14", "name": "Pongal"},
+    {"date": "2026-01-01", "name": "New Year's Day", "type": "national"},
+    {"date": "2026-01-14", "name": "Pongal", "type": "regional"},
     ...
   ]
   ```
+
+- **Error Responses**:
+  - 404: Country code not found.
+  - 400: Invalid date format (use YYYY-MM-DD).
 
 - **Error Response** (404):
   ```json
