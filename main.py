@@ -27,8 +27,12 @@ def get_country_holidays(country_code: str, year: int, type: str = "both", date:
         
         # Get regional holidays from all subdivisions
         try:
-            country_module = getattr(holidays, country_code.upper())
-            subdivs = list(country_module.subdivisions.keys()) if hasattr(country_module, 'subdivisions') else []
+            if country_code.upper() == 'IN':
+                # Hardcode subdivisions for India as getattr may not work in some environments
+                subdivs = ['AN', 'AP', 'AR', 'AS', 'BR', 'CG', 'CH', 'DD', 'DL', 'DN', 'GA', 'GJ', 'HP', 'HR', 'JH', 'JK', 'KA', 'KL', 'LA', 'LD', 'MH', 'ML', 'MN', 'MP', 'MZ', 'NL', 'OR', 'PB', 'PY', 'RJ', 'SK', 'TG', 'TN', 'TR', 'UP', 'UT', 'WB']
+            else:
+                country_module = getattr(holidays, country_code.upper())
+                subdivs = list(country_module.subdivisions.keys()) if hasattr(country_module, 'subdivisions') else []
             for subdiv in subdivs:
                 try:
                     regional_holidays = holidays.country_holidays(country_code.upper(), subdiv=subdiv, years=year)
