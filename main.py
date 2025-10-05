@@ -4,6 +4,10 @@ import holidays
 # Create the FastAPI application
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"message": "Festivals API is running! Use /holidays/{country_code}?year={year} to get holidays."}
+
 # Define an API endpoint
 @app.get("/holidays/{country_code}")
 def get_country_holidays(country_code: str, year: int):
