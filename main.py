@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 import holidays
-from holidays.utils import list_subdivisions
 
 # Create the FastAPI application
 app = FastAPI()
@@ -20,14 +19,15 @@ def get_country_holidays(country_code: str, year: int):
         
         # Get regional holidays from all subdivisions
         try:
-            subdivs = list_subdivisions(country_code.upper())
+            country_module = getattr(holidays, country_code.upper())
+            subdivs = list(country_module.subdivisions.keys()) if hasattr(country_module, 'subdivisions') else []
             for subdiv in subdivs:
                 try:
                     regional_holidays = holidays.country_holidays(country_code.upper(), subdiv=subdiv, years=year)
                     holiday_dict.update(regional_holidays)
                 except (KeyError, NotImplementedError):
                     pass
-        except (AttributeError, KeyError):
+        except AttributeError:
             pass  # No subdivisions available
         
         # Convert the data into a sorted list of dictionaries for easy use in JS
