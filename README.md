@@ -1,10 +1,11 @@
 # Festival API
 
-A simple FastAPI-based web service to retrieve holidays (national and regional) for any country using the `holidays` Python library.
+A FastAPI-based web service to retrieve national and regional holidays dynamically for any country using the `holidays` Python library and `pycountry` for ISO 3166-2 subdivision codes.
 
 ## Features
 
 - Fetch all holidays (national + regional) for a given country and year.
+- Dynamically fetch regional holidays using ISO 3166-2 subdivision codes.
 - Supports ISO country codes (e.g., 'IN' for India, 'US' for United States).
 - Returns data in JSON format, easy to consume from JavaScript or other clients.
 - Deployed on Railway for public access.
@@ -59,8 +60,8 @@ A simple FastAPI-based web service to retrieve holidays (national and regional) 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/festival-api.git
-   cd festival-api
+   git clone https://github.com/saikumar2304/Festivals-API.git
+   cd Festivals-API
    ```
 
 2. Install dependencies:
@@ -87,6 +88,7 @@ This project is configured for deployment on Railway:
 
 - **FastAPI**: Modern Python web framework.
 - **holidays**: Library for generating holiday data.
+- **pycountry**: Library for ISO 3166-2 subdivision codes.
 - **Uvicorn**: ASGI server for FastAPI.
 
 ## License
@@ -95,4 +97,4 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contributing
 
-Feel free to open issues or submit pull requests!# Festivals-API
+Feel free to open issues or submit pull requests!

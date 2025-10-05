@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import holidays
 from datetime import datetime
+import pycountry
 
 # Create the FastAPI application
 app = FastAPI()
@@ -26,20 +27,27 @@ def get_country_holidays(country_code: str, year: int, type: str = "both", date:
             holiday_list.append({"date": date_obj.isoformat(), "name": name, "type": "national"})
         
         # Get regional holidays from all subdivisions
+        # Fetch subdivisions dynamically using pycountry
         try:
-            subdivs = list(holidays.list_subdivisions(country_code.upper()).keys())
+            country = pycountry.countries.get(alpha_2=country_code.upper())
+            if country:
+                subdivs = [subdivision.code.split('-')[-1] for subdivision in pycountry.subdivisions.get(country_code=country.alpha_2)]
+            else:
+                subdivs = []
+            print("\nRegional Holidays:")
             for subdiv in subdivs:
                 try:
                     regional_holidays = holidays.country_holidays(country_code.upper(), subdiv=subdiv, years=year)
                     for date_obj, name in regional_holidays.items():
+                        print(f"{date_obj} ({subdiv}): {name}")
                         # Add only if date not already in list (avoid duplicates)
                         existing_dates = {h['date'] for h in holiday_list}
                         if date_obj.isoformat() not in existing_dates:
                             holiday_list.append({"date": date_obj.isoformat(), "name": name, "type": "regional"})
                 except (KeyError, NotImplementedError):
                     pass
-        except:
-            pass  # No subdivisions available or function not supported
+        except Exception as e:
+            print(f"Error fetching subdivisions dynamically: {e}")
         
         # Sort by date
         holiday_list.sort(key=lambda x: x['date'])
