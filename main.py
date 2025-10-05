@@ -15,11 +15,12 @@ def get_country_holidays(country_code: str, year: int):
     Gets a list of all holidays (national and regional) for a specific country and year.
     """
     try:
-        holiday_dict = {}
+        holiday_list = []
         
         # Get national holidays
         national_holidays = holidays.country_holidays(country_code.upper(), years=year)
-        holiday_dict.update(national_holidays)
+        for date, name in national_holidays.items():
+            holiday_list.append({"date": date.isoformat(), "name": name, "type": "national"})
         
         # Get regional holidays from all subdivisions
         try:
@@ -28,14 +29,18 @@ def get_country_holidays(country_code: str, year: int):
             for subdiv in subdivs:
                 try:
                     regional_holidays = holidays.country_holidays(country_code.upper(), subdiv=subdiv, years=year)
-                    holiday_dict.update(regional_holidays)
+                    for date, name in regional_holidays.items():
+                        # Add only if date not already in list (avoid duplicates)
+                        existing_dates = {h['date'] for h in holiday_list}
+                        if date.isoformat() not in existing_dates:
+                            holiday_list.append({"date": date.isoformat(), "name": name, "type": "regional"})
                 except (KeyError, NotImplementedError):
                     pass
         except AttributeError:
             pass  # No subdivisions available
         
-        # Convert the data into a sorted list of dictionaries for easy use in JS
-        holiday_list = [{"date": date.isoformat(), "name": name} for date, name in sorted(holiday_dict.items())]
+        # Sort by date
+        holiday_list.sort(key=lambda x: x['date'])
         
         return holiday_list
 
