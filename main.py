@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 import holidays
 from datetime import datetime
 import pycountry
+from timezone_country_map import TIMEZONE_COUNTRY_MAP
 
 # Create the FastAPI application
 app = FastAPI()
@@ -72,3 +73,27 @@ def get_country_holidays(country_code: str, year: int, type: str = "both", date:
     except KeyError:
         # If the country code is invalid, return a 404 error
         raise HTTPException(status_code=404, detail="Country code not found.")
+
+@app.get("/holidays/timezone/{timezone}")
+def get_holidays_by_timezone(timezone: str, year: int, type: str = "both", date: str = None):
+    """
+    Gets holidays for all countries in a given timezone and year.
+    Filters: type='national', 'regional', or 'both' (default).
+    Optional: date='YYYY-MM-DD' to get holidays on a specific date.
+    Only supports the timezones provided in the mapping.
+    """
+    tz = timezone.upper()
+    if tz not in TIMEZONE_COUNTRY_MAP:
+        raise HTTPException(status_code=400, detail="Unsupported timezone. Use one of the documented timezones.")
+    results = []
+    for country_code in TIMEZONE_COUNTRY_MAP[tz]:
+        try:
+            holidays_list = get_country_holidays(country_code, year, type, date)
+            for h in holidays_list:
+                h["country_code"] = country_code
+            results.extend(holidays_list)
+        except HTTPException:
+            continue
+    # Sort by date
+    results.sort(key=lambda x: x['date'])
+    return results

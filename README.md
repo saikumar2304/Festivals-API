@@ -56,6 +56,51 @@ A FastAPI-based web service to retrieve national and regional holidays dynamical
   {"detail": "Country code not found."}
   ```
 
+## Timezone-based Holidays
+
+### Fetch Holidays by Timezone
+**Endpoint:** `/holidays/timezone/{timezone}`
+
+**Method:** `GET`
+
+**Description:** Retrieves holidays for all countries in a specified timezone. Only the following timezones are supported:
+
+- Americas: EST, PST, CST, MST, AST, AKST, HST, BRT, ART, CLT, PET, COT, VET, UYT, PYT
+- Europe: CET, GMT, EET, WET, MSK, BST, CEST, TRT
+- Asia: IST, JST, KST, CST, SGT, HKT, GST, IRST, PKT, BST, NPT, MMT, ICT, PHT, WIT, CIT, EIT, TST, MST
+- Oceania: AEST, ACST, AWST, NZST, NZDT, FJT, PGT
+- Africa: SAST, EAT, WAT, CAT, EET, MUT, SCT, MVT
+- Pacific: SST, TOT, CHUT, PONT
+- Russia: YEKT, OMST, KRAT, IRKT, YAKT, VLAT, MAGT, PETT
+- Middle East: AST, TRT, AFT
+- Central Asia: UZT, TJT, TMT, KGT, ALMT
+
+**Path Parameters:**
+- `timezone` (string): The timezone abbreviation (e.g., `IST`, `EST`).
+
+**Query Parameters:**
+- `year` (int, required): The year for which to fetch holidays.
+- `type` (string, optional): `national`, `regional`, or `both` (default).
+- `date` (string, optional): Filter by a specific date (`YYYY-MM-DD`).
+
+**Example Request:**
+```
+GET https://festivalsapi.up.railway.app/holidays/timezone/IST?year=2025&type=both
+```
+
+**Example Response:**
+```json
+[
+  {
+    "date": "2025-01-26",
+    "name": "Republic Day",
+    "type": "national",
+    "country_code": "IN"
+  },
+  ...
+]
+```
+
 ## Local Development
 
 1. Clone the repository:
